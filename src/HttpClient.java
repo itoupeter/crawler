@@ -76,7 +76,7 @@ public class HttpClient {
 	public BloomFilter filter = new BloomFilter();
 	
 	//---最大爬取网页数量---
-	private int MAX_HTML = 20;
+	private int MAX_HTML = 30;
 	
 	//---运行状态标记---
 	private static final int RUNNING = 0;
@@ -122,11 +122,12 @@ public class HttpClient {
 	}
 	
 	//---constructor---
-	public HttpClient( Crawler crawler, int nClients, LinkedBlockingQueue< String > urlQueue, LinkedBlockingQueue< String > htmlQueue, Logger logger ){
+	public HttpClient( Crawler crawler, int nClients, LinkedBlockingQueue< String > urlQueue, LinkedBlockingQueue< String > htmlQueue, int MAX_HTML, Logger logger ){
 		this.crawler = crawler;
 		this.nClients = nClients;
 		this.htmlQueue = htmlQueue;
 		this.urlQueue = urlQueue;
+		this.MAX_HTML = MAX_HTML;
 		this.logger = logger;
 		
 		//---创建含有nClients的队列---

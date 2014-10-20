@@ -129,7 +129,7 @@ public class Test {
 	
 	//---test HttpClinet---
 	public void run5(){
-		Crawler crawler = new Crawler( 1, 1 );
+		Crawler crawler = new Crawler();
 		crawler.work();
 		crawler.start();
 	}

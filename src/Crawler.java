@@ -25,6 +25,9 @@ public class Crawler {
 	//---HtmlParser数量，从HTML文件抽取URL加入队列---
 	private int MAX_HTMLPARSER;
 	
+	//---下载网页数量---
+	private int MAX_HTML;
+	
 	//---HttpClient模块---
 	private HttpClient myHttpClient;
 	
@@ -61,12 +64,43 @@ public class Crawler {
 	public int flag = PAUSING;
 	
 	//---constructor---
-	public Crawler( int MAX_HTTPCLIENT, int MAX_HTMLPARSER ){
-		this.MAX_HTTPCLIENT = MAX_HTTPCLIENT;
-		this.MAX_HTMLPARSER = MAX_HTMLPARSER;
+	public Crawler(){
+		File file = new File( MyAPI.getRootDir() + "/config.txt" );
+		if( !file.exists() ){
+			try {
+				file.createNewFile();
+				PrintWriter pw = new PrintWriter( file );
+				pw.println( "[PARSER_THREAD]\n1\n[DOWNLOAD_THREAD]\n1\n[MAX_HTML]\n100" );
+				pw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			BufferedReader br = new BufferedReader( new FileReader( file ) );
+			String tmp = "";
+			while( ( tmp = br.readLine() ) != null ){
+				if( tmp.indexOf( "PARSER_THREAD" ) != -1 ){
+					tmp = br.readLine();
+					MAX_HTMLPARSER = Integer.parseInt( tmp );
+				} else if( tmp.indexOf( "DOWNLOAD_THREAD" ) != -1 ){
+					tmp = br.readLine();
+					MAX_HTTPCLIENT = Integer.parseInt( tmp );
+				} else if( tmp.indexOf( "MAX_HTML" ) != -1 ){
+					tmp = br.readLine();
+					MAX_HTML = Integer.parseInt( tmp );
+				}
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		//---创建HttpClinet模块---
-		myHttpClient = new HttpClient( this, MAX_HTTPCLIENT, urlQueue, htmlQueue, logger );
+		myHttpClient = new HttpClient( this, MAX_HTTPCLIENT, urlQueue, htmlQueue, MAX_HTML, logger );
 
 		//---创建HtmlParser模块---
 		myHtmlParser = new HtmlParser( this, MAX_HTMLPARSER, urlQueue, htmlQueue, specifiedDomain, logger );

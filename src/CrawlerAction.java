@@ -28,7 +28,7 @@ public class CrawlerAction extends HttpServlet {
 		
 		if( action.indexOf( "START" ) != -1 ){
 			if( CrawlerServlet.crawler == null ){
-				CrawlerServlet.crawler = new Crawler( 1, 1 );
+				CrawlerServlet.crawler = new Crawler();
 				new Thread( new Runnable() {
 					@Override
 					public void run() {

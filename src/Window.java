@@ -179,7 +179,7 @@ public class Window extends JFrame {
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if( flag == STOPPED ){
-					crawler = new Crawler( Integer.parseInt( textField1.getText() ), Integer.parseInt( textField2.getText() ) );
+					crawler = new Crawler();
 					crawler.work();
 				}
 				else if( flag == PAUSING ){
