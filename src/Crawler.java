@@ -28,6 +28,9 @@ public class Crawler {
 	//---下载网页数量---
 	private int MAX_HTML;
 	
+	//---推送队列大小---
+	private int RESOURCE_BUFFER_SIZE;
+	
 	//---HttpClient模块---
 	private HttpClient myHttpClient;
 	
@@ -89,6 +92,9 @@ public class Crawler {
 				} else if( tmp.indexOf( "MAX_HTML" ) != -1 ){
 					tmp = br.readLine();
 					MAX_HTML = Integer.parseInt( tmp );
+				} else if( tmp.indexOf( "RESOURCE_BUFFER_SIZE" ) != -1 ){
+					tmp = br.readLine();
+					RESOURCE_BUFFER_SIZE = Integer.parseInt( tmp );
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -100,7 +106,7 @@ public class Crawler {
 		}
 		
 		//---创建HttpClinet模块---
-		myHttpClient = new HttpClient( this, MAX_HTTPCLIENT, urlQueue, htmlQueue, MAX_HTML, logger );
+		myHttpClient = new HttpClient( this, MAX_HTTPCLIENT, urlQueue, htmlQueue, MAX_HTML, RESOURCE_BUFFER_SIZE, logger );
 
 		//---创建HtmlParser模块---
 		myHtmlParser = new HtmlParser( this, MAX_HTMLPARSER, urlQueue, htmlQueue, specifiedDomain, logger );
