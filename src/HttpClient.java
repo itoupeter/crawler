@@ -152,6 +152,7 @@ public class HttpClient {
 		this.MAX_HTML = MAX_HTML;
 		this.RESOURCE_BUFFER_SIZE = RESOURCE_BUFFER_SIZE;
 		this.logger = logger;
+		resQueue = new LinkedBlockingQueue<>();
 		
 		//---创建含有nClients的队列---
 		threads = new DownloadThread[ nClients ];
@@ -264,12 +265,31 @@ public class HttpClient {
 				CloseableHttpResponse myHttpResponse = null;
 				StatusLine statusLine = null;
 				HttpEntity entity = null;
+				String html = null;
+				ContentType contentType = ContentType.getOrDefault( entity );
+				Charset charset = contentType.getCharset();
+				if( charset == null ) charset = HTTP.DEF_CONTENT_CHARSET;
 				try {
 					Crawler.log( "Client_" + id + " Downloading: " + myURL.toString() );
 					myHttpResponse = httpClient.execute( myHttpGet );
 					Crawler.log( "Client_" + id + " Downloaded: " + myURL.toString() );
 		            statusLine = myHttpResponse.getStatusLine();
 					entity = myHttpResponse.getEntity();
+					
+					//---HTML内容过大，不是网页---
+					if( entity.getContentLength() > 1000000 ){
+						Crawler.log( "Client_" + id + " 下载失败：Content too large. Discarded." );
+						continue;
+					}
+
+					//---返回状态码提示异常---
+					if( statusLine.getStatusCode() >= 300 ){
+						Crawler.log( "Client_" + id + " Download failed." );
+						continue;
+					}
+
+					//---用适当字符集处理HTML内容---
+					html = EntityUtils.toString( entity, charset );
 				} catch( ClientProtocolException e ){
 					//---错误协议，URI问题---
 					e.printStackTrace();
@@ -287,36 +307,9 @@ public class HttpClient {
 						}
 					}
 				}
-				
-				//---HTML内容过大，不是网页---
-				if( entity.getContentLength() > 1000000 ){
-					Crawler.log( "Client_" + id + " 下载失败：Content too large. Discarded." );
-					continue;
-				}
 
-				//---返回状态码提示异常---
-				if( statusLine.getStatusCode() >= 300 ){
-					Crawler.log( "Client_" + id + " Download failed." );
-					continue;
-				}
-
-				//---用适当字符集处理HTML内容---
-				String html = null;
-				ContentType contentType = ContentType.getOrDefault( entity );
-				Charset charset = contentType.getCharset();
-				if( charset == null ) charset = HTTP.DEF_CONTENT_CHARSET;
-				try {
-					html = EntityUtils.toString( entity, charset );
-					if( html == null ) continue;
-				} catch (ParseException e2) {
-					//---if header elements cannot be parsed---
-					e2.printStackTrace();
-					continue;
-				} catch (IOException e2) {
-					//---if an error occurs reading the input stream---
-					e2.printStackTrace();
-					continue;
-				}
+				//---html为空---
+				if( html == null ) continue;
 
 				//---用boilerpipe提取正文---
 				TextDocument doc;
@@ -412,7 +405,7 @@ public class HttpClient {
 					HttpPost httpPost = new HttpPost( "http://localhost:8080/crawler/GetResource" );
 //					HttpPost httpPost = new HttpPost( "http://222.201.145.116:8080/scut/SolrAdd" );
 					List< NameValuePair > form = new ArrayList< NameValuePair >();
-					form.add( new BasicNameValuePair( "data", list.toString() ) );
+					form.add( new BasicNameValuePair( "data", json.toString() ) );
 					UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity( form, Consts.UTF_8 );
 					httpPost.setEntity( formEntity );
 					CloseableHttpResponse response = null;
