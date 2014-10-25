@@ -28,9 +28,6 @@ public class HtmlParser {
 	//---parser队列---
 	private Parser parsers[];
 	
-	//---限制爬取网站---
-	public String[] specifiedDomain;
-	
 	//---待分析的HTML文件名队列---
 	private LinkedBlockingQueue< String > htmlQueue;
 	
@@ -52,12 +49,11 @@ public class HtmlParser {
 	//---htmlQueue: 储存待分析的HTML文件的文件名的队列---
 	//---urlQueue: 储存待爬取的URL的队列---
 	//---logger: 日志工具---
-	public HtmlParser( Crawler crawler, int nParsers, LinkedBlockingQueue< String > urlQueue, LinkedBlockingQueue< String > htmlQueue, String[] specifiedDomain, Logger logger ){
+	public HtmlParser( Crawler crawler, int nParsers, LinkedBlockingQueue< String > urlQueue, LinkedBlockingQueue< String > htmlQueue, Logger logger ){
 		this.crawler = crawler;
 		this.nParsers = nParsers;
 		this.htmlQueue = htmlQueue;
 		this.urlQueue = urlQueue;
-		this.specifiedDomain = specifiedDomain;
 		this.logger = logger;
 		
 		//---创建含有nParsers个parser的队列---
@@ -186,10 +182,10 @@ public class HtmlParser {
 					url = urlList.get( i );
 					
 					//---爬取限定网站内的URL---
-					if( specifiedDomain.length > 0 ){
+					if( crawler.specifiedDomain.length > 0 ){
 						boolean isSpecied = false;
-						for( int j = 0; j < specifiedDomain.length; ++j ){
-							if( url.indexOf( specifiedDomain[ j ] ) != -1 ) {
+						for( int j = 0; j < crawler.specifiedDomain.length; ++j ){
+							if( url.indexOf( crawler.specifiedDomain[ j ] ) != -1 ) {
 								isSpecied = true;
 								break;
 							}

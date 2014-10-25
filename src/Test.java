@@ -2,11 +2,15 @@
 //PL
 //SCUT Samsung Innovative Laboratory
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.net.URL;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -188,6 +192,27 @@ public class Test {
 				}
 				break;
 			}
+		}
+	}
+	
+	//---get domain---
+	public void run9(){
+		File file = new File( MyAPI.getRootDir() + "/SeedUrls.txt" );
+		File file2 = new File( MyAPI.getRootDir() + "/Domains.txt" );
+		try (
+			BufferedReader br = new BufferedReader( new FileReader( file ) );
+			PrintWriter pw = new PrintWriter( file2 );
+			) {
+			String tmp;
+			while( ( tmp = br.readLine() ) != null ){
+				pw.println( new URL( tmp ).getHost() );
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
 		}
 	}
 }

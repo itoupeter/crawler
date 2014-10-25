@@ -324,8 +324,11 @@ public class HttpClient {
 					continue;
 				}
 				String body = "";
+				String title = doc.getTitle();
 				try {
 					body = ArticleExtractor.INSTANCE.getText( doc );
+					if( body == null || body.length() < 1 ) body = "";
+					if( title == null || title.length() < 1 ) title = "";
 				} catch (BoilerpipeProcessingException e) {
 					Crawler.log( e.toString() );
 					continue;
@@ -348,7 +351,7 @@ public class HttpClient {
 				PrintWriter pw = null;
 				try {
 					pw = new PrintWriter( file );
-					pw.println( "<!---\n[URL]\n" + myURL.toString() + "\n[title]\n" + doc.getTitle() + "\n[body]\n" + body + "\n--->" );
+					pw.println( "<!---\n[URL]\n" + myURL.toString() + "\n[title]\n" + title + "\n[body]\n" + body + "\n--->" );
 					pw.println( html );
 				} catch (FileNotFoundException e2) {
 					//---failed to write file---
@@ -374,7 +377,7 @@ public class HttpClient {
 					resQueue.put( 
 							new Resource()
 							.setUrl( myURL.toString() )
-							.setTitle( doc.getTitle() )
+							.setTitle( title )
 							.setBody( body.substring( 0, 128 < body.length() ? 128 : body.length() ) )
 							);
 				} catch (InterruptedException e1) {
@@ -402,8 +405,8 @@ public class HttpClient {
 					json.put( "results", list );
 					
 					CloseableHttpClient httpClient = HttpClients.createDefault();
-					HttpPost httpPost = new HttpPost( "http://localhost:8080/crawler/GetResource" );
-//					HttpPost httpPost = new HttpPost( "http://222.201.145.116:8080/scut/SolrAdd" );
+//					HttpPost httpPost = new HttpPost( "http://localhost:8080/crawler/GetResource" );
+					HttpPost httpPost = new HttpPost( "http://222.201.145.116:8080/scut/SolrAdd" );
 					List< NameValuePair > form = new ArrayList< NameValuePair >();
 					form.add( new BasicNameValuePair( "data", json.toString() ) );
 					UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity( form, Consts.UTF_8 );
@@ -412,13 +415,15 @@ public class HttpClient {
 					try {
 						response = httpClient.execute( httpPost );
 						HttpEntity respEntity = response.getEntity();
-						System.out.println( EntityUtils.toString( respEntity ) );
+						Crawler.log( EntityUtils.toString( respEntity ) );
+//						System.out.println( EntityUtils.toString( respEntity ) );
 					} catch (ClientProtocolException e) {
 						//---URI问题---
 						e.printStackTrace();
 					} catch (IOException e) {
 						//---连接到solr服务器失败---
 						e.printStackTrace();
+						Crawler.log( "Failed to add resource..." );
 					} finally{
 						if( response != null ){
 							try {

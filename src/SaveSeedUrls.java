@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.Iterator;
 
 import javax.servlet.ServletException;
@@ -30,10 +31,16 @@ public class SaveSeedUrls extends HttpServlet {
 		JSONArray list = json.getJSONArray( "urls" );
 		File file = new File( MyAPI.getRootDir() + "/SeedUrls.txt" );
 		if( !file.exists() ) file.createNewFile();
-		
 		PrintWriter pw = new PrintWriter( new FileWriter( file, true ) );
 		for( Iterator iterator = list.iterator(); iterator.hasNext(); ){
 			pw.println( iterator.next().toString() );
+		}
+		pw.close();
+		file = new File( MyAPI.getRootDir() + "/Domains.txt" );
+		if( !file.exists() ) file.createNewFile();
+		pw = new PrintWriter( new FileWriter( file, true ) );
+		for( Iterator iterator = list.iterator(); iterator.hasNext(); ){
+			pw.println( new URL( iterator.next().toString() ).getHost() );
 		}
 		pw.close();
 		

@@ -8,7 +8,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
@@ -51,13 +54,7 @@ public class Crawler {
 	public static String[] seedURL;
 	
 	//---限定爬取网站---
-	public static String[] specifiedDomain = {
-		"peopledaily", 
-		"chinadaily", 
-		"shanghaidaily", 
-		"lifeofguangzhou", 
-		"globaltimes", 
-	};
+	public static String[] specifiedDomain;
 	
 	//---运行状态标记---
 	public static final int RUNNING = 0;
@@ -109,7 +106,7 @@ public class Crawler {
 		myHttpClient = new HttpClient( this, MAX_HTTPCLIENT, urlQueue, htmlQueue, MAX_HTML, RESOURCE_BUFFER_SIZE, logger );
 
 		//---创建HtmlParser模块---
-		myHtmlParser = new HtmlParser( this, MAX_HTMLPARSER, urlQueue, htmlQueue, specifiedDomain, logger );
+		myHtmlParser = new HtmlParser( this, MAX_HTMLPARSER, urlQueue, htmlQueue, logger );
 	}
 	
 	//---初始化日志---
@@ -162,7 +159,16 @@ public class Crawler {
 				Crawler.log( e.toString() );
 			}
 		}
+		File file2 = new File( MyAPI.getRootDir() + "/Domains.txt" );
+		if( !file2.exists() ){
+			try{
+				file.createNewFile();
+			} catch ( IOException e ){
+				Crawler.log( e.toString() );
+			}
+		}
 		BufferedReader br = null;
+		PrintWriter pw = null;
 		String str;
 		try {
 			br = new BufferedReader( new FileReader( file ) );
@@ -181,6 +187,30 @@ public class Crawler {
 				try {
 					br.close();
 				} catch (IOException e) {
+					Crawler.log( e.toString() );
+				}
+				br = null;
+			}
+		}
+		LinkedList< String > domainList = new LinkedList< String >();
+		try{
+			br = new BufferedReader( new FileReader( file2 ) );
+			while( ( str = br.readLine() ) != null ){
+				domainList.add( str );
+			}
+			specifiedDomain = new String[ domainList.size() ];
+			for( int i = 0; i < specifiedDomain.length; ++i ){
+				specifiedDomain[ i ] = domainList.getFirst();
+			}
+		} catch ( FileNotFoundException e ){
+			Crawler.log( e.toString() );
+		} catch ( IOException e ){
+			Crawler.log( e.toString() );
+		} finally {
+			if( br != null ){
+				try{
+					br.close();
+				} catch ( IOException e ){
 					Crawler.log( e.toString() );
 				}
 				br = null;
