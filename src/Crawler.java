@@ -8,10 +8,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
@@ -111,36 +110,24 @@ public class Crawler {
 	
 	//---初始化日志---
 	{
-//		logger = Logger.getLogger( "log" );
-//		logger.setLevel( Level.ALL );
-//		try{
-//			FileHandler fileHandler;
-//			fileHandler = new FileHandler( MyAPI.getRootDir() + "/Crawler.log" );
-//			fileHandler.setFormatter( new Formatter(){
-//				public String format(LogRecord arg0) {
-//					Date date = new Date();
-//					return "[" + date.toString() + "]"
-//							+ "[" + arg0.getLevel() + "]"
-//							+ arg0.getMessage() + "\n";
-//				}
-//			});
-//		} catch( SecurityException | IOException e ){
-//			Crawler.log( e.toString() );
-//		}
-		
-		File file = new File( MyAPI.getRootDir() + "/log.txt" );
-		if( !file.exists() ) {
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				Crawler.log( e.toString() );
-			}
-		}
-		
-		try {
-			pw = new PrintWriter( file );
-		} catch (FileNotFoundException e) {
-			Crawler.log( e.toString() );
+		logger = Logger.getLogger( "log" );
+		logger.setLevel( Level.WARNING );
+		try{
+			SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd-HH-mm-ss" );
+			FileHandler fileHandler = new FileHandler( MyAPI.getRootDir() + "/log-" + sdf.format( new Date() ) );
+			fileHandler.setFormatter( new Formatter(){
+				public String format(LogRecord arg0) {
+					Date date = new Date();
+					return "[" + date.toString() + "]"
+							+ "[" + arg0.getLevel() + "]"
+							+ arg0.getMessage() + "\n";
+				}
+			});
+			logger.addHandler( fileHandler );
+		} catch( SecurityException e ){
+			e.printStackTrace();
+		} catch( IOException e ){
+			e.printStackTrace();
 		}
 	}
 	
