@@ -3,9 +3,6 @@
 //SCUT Samsung Innovative Laboratory
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -16,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 public class CrawlerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private int flag = 0;
 	public static Crawler crawler = null;
 
 	@Override
@@ -41,14 +37,7 @@ public class CrawlerServlet extends HttpServlet {
 				break;
 			}
 		}
-		pw.println( "crawler state: " + state + "\nlog:");
-		
-		File file = new File( MyAPI.getRootDir() + "/log.txt" );
-		BufferedReader br = new BufferedReader( new FileReader( file ) );
-		String tmp = "";
-		while( ( tmp = br.readLine() ) != null ){
-			pw.println( tmp );
-		}
+		pw.println( "crawler state: " + state );
 		
 	}
 }

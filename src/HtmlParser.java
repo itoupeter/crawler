@@ -113,13 +113,17 @@ public class HtmlParser {
 						Thread.sleep( 1000 );
 						continue;
 					} catch (InterruptedException e) {
-						Crawler.log( e.toString() );
+						e.printStackTrace();
+						//---CODE2000---
+						logger.warning( "CODE2000" );
 					}
 				} else if( flag == RUNNING ){
 					try{
 						Thread.sleep( 1000 );
 					} catch ( InterruptedException e ){
-						Crawler.log( e.toString() );
+						e.printStackTrace();
+						//---CODE2001---
+						logger.warning( "CODE2001" );
 					}
 				}
 				
@@ -128,8 +132,10 @@ public class HtmlParser {
 					try {
 						Thread.sleep( 1000 );
 						continue;
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+						//---CODE2002---
+						logger.warning( "CODE2002" );
 					}
 				}
 				
@@ -137,7 +143,9 @@ public class HtmlParser {
 				try {
 					filename = htmlQueue.poll( 1, TimeUnit.SECONDS );
 				} catch (InterruptedException e) {
-					Crawler.log( e.toString() );
+					e.printStackTrace();
+					//---CODE2003---
+					logger.warning( "CODE2003" );
 				}
 				
 				//---若filename为null，则队列为空，跳到下一周期。---
@@ -159,22 +167,28 @@ public class HtmlParser {
 					while( ( tmp = br.readLine() ) != null ) buffer.append( tmp ).append( "\n" );
 					html = buffer.toString();
 				} catch (FileNotFoundException e) {
-					Crawler.log( e.toString() );
+					e.printStackTrace();
+					//---CODE2004---
+					logger.warning( "CODE2004" );
 				} catch (IOException e) {
-					Crawler.log( e.toString() );
+					e.printStackTrace();
+					//---CODE2005---
+					logger.warning( "CODE2005" );
 				} finally {
 					if( br != null ){
 						try {
 							br.close();
 						} catch (IOException e) {
-							Crawler.log( e.toString() );
+							e.printStackTrace();
+							//---CODE2006---
+							logger.warning( "CODE2006" );
 						}
 						br = null;
 					}
 				}
 				
 				//---从html字符串分析出URL---
-				Crawler.log( "Parser_" + id + " Extracting: " + url );
+				logger.info( "Parser_" + id + " Parsing: " + url );
 				urlList = getAnchorTagUrls( url, html );
 				nUrls = urlList.size();
 				
@@ -182,10 +196,10 @@ public class HtmlParser {
 					url = urlList.get( i );
 					
 					//---爬取限定网站内的URL---
-					if( crawler.specifiedDomain.length > 0 ){
+					if( Crawler.specifiedDomain.length > 0 ){
 						boolean isSpecied = false;
-						for( int j = 0; j < crawler.specifiedDomain.length; ++j ){
-							if( url.indexOf( crawler.specifiedDomain[ j ] ) != -1 ) {
+						for( int j = 0; j < Crawler.specifiedDomain.length; ++j ){
+							if( url.indexOf( Crawler.specifiedDomain[ j ] ) != -1 ) {
 								isSpecied = true;
 								break;
 							}
@@ -200,7 +214,9 @@ public class HtmlParser {
 					try {
 						urlQueue.put( url );
 					} catch (InterruptedException e) {
-						Crawler.log( e.toString() );
+						e.printStackTrace();
+						//---CODE2007---
+						logger.warning( "CODE2007" );
 					}
 //					System.out.println( "Parser_" + id + " 加入队列：" + url );
 				}

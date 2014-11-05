@@ -2,20 +2,20 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/boilerpipe-1.2.0/boilerpipe-1.2.0.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/boilerpipe-1.2.0/nekohtml-1.9.13.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/boilerpipe-1.2.0/xerces-2.9.1.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/httpcomponents-client-4.3.5/commons-codec-1.6.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/httpcomponents-client-4.3.5/fluent-hc-4.3.5.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/httpcomponents-client-4.3.5/httpclient-4.3.5.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/httpcomponents-client-4.3.5/httpclient-cache-4.3.5.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/httpcomponents-client-4.3.5/httpcore-4.3.2.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/httpcomponents-client-4.3.5/httpmime-4.3.5.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/json/commons-beanutils-1.9.2.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/json/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/json/commons-lang-2.6.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/json/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/json/ezmorph-1.0.6.jar"/>
-	<classpathentry kind="lib" path="E:/eclipse_workspace/PLCrawler/lib/json/json-lib-2.4-jdk15.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/boilerpipe-1.2.0/boilerpipe-1.2.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/boilerpipe-1.2.0/nekohtml-1.9.13.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/boilerpipe-1.2.0/xerces-2.9.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/httpcomponents-client-4.3.5/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/httpcomponents-client-4.3.5/fluent-hc-4.3.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/httpcomponents-client-4.3.5/httpclient-4.3.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/httpcomponents-client-4.3.5/httpclient-cache-4.3.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/httpcomponents-client-4.3.5/httpcore-4.3.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/httpcomponents-client-4.3.5/httpmime-4.3.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/json/commons-beanutils-1.9.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/json/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/json/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/json/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/json/ezmorph-1.0.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/pl/GitHub/crawler/lib/json/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -96,12 +96,18 @@ public class HttpClient {
 	//---待推送资源队列---
 	private LinkedBlockingQueue< Resource > resQueue;
 	
+	//---log queue---
+	public LinkedBlockingQueue< String > logQueue;
+	
 	//---运行状态标记---
 	private static final int RUNNING = 0;
 	private static final int PAUSING = 1;
 	private static final int STOPPED = 2;
 	private static final int REWINDING = 3;
 	private int flag = PAUSING;
+	
+	//---preceding noise amount---
+	private int noise = 50;
 	
 	//---初始化httpClient和connMgr---
 	{
@@ -118,7 +124,7 @@ public class HttpClient {
 		        		try{
 		        			return Long.parseLong( value ) * 1000;
 		        		}catch( NumberFormatException e ){
-		        			Crawler.log( e.toString() );
+		        			e.printStackTrace();
 		        		}
 		        	}
 				}
@@ -151,6 +157,7 @@ public class HttpClient {
 		this.RESOURCE_BUFFER_SIZE = RESOURCE_BUFFER_SIZE;
 		this.logger = logger;
 		resQueue = new LinkedBlockingQueue<>();
+		logQueue = new LinkedBlockingQueue<>();
 		
 		//---创建含有nClients的队列---
 		threads = new DownloadThread[ nClients ];
@@ -224,13 +231,17 @@ public class HttpClient {
 						Thread.sleep( 1000 );
 						continue;
 					} catch (InterruptedException e) {
-						Crawler.log( e.toString() );
+						e.printStackTrace();
+						//---CODE3000---
+						logger.warning( "CODE3000" );
 					}
 				} else if( flag == RUNNING ){
 					try{
 						Thread.sleep( 1000 );
 					} catch ( InterruptedException e ){
-						Crawler.log( e.toString() );
+						e.printStackTrace();
+						//---CODE3001---
+						logger.warning( "CODE3001" );
 					}
 				}
 
@@ -239,7 +250,9 @@ public class HttpClient {
 				try {
 					url = urlQueue.poll( 1, TimeUnit.SECONDS );
 				} catch ( InterruptedException e ) {
-					Crawler.log( e.toString() );
+					e.printStackTrace();
+					//---CODE3002---
+					logger.warning( "CODE3002" );
 				}
 				
 				//---若url为null，则队列为空，跳到下一周期---
@@ -252,7 +265,9 @@ public class HttpClient {
 					myURL = new URL( url );
 					myURI = new URI( myURL.getProtocol(), myURL.getHost(), myURL.getPath(), myURL.getQuery(), null );
 				} catch ( MalformedURLException | URISyntaxException e ) {
-					Crawler.log( e.toString() );
+					e.printStackTrace();
+					//---CODE3003---
+					logger.warning( "CODE3003" );
 					continue;
 				}
 				
@@ -268,21 +283,23 @@ public class HttpClient {
 				Charset charset = contentType.getCharset();
 				if( charset == null ) charset = HTTP.DEF_CONTENT_CHARSET;
 				try {
-					Crawler.log( "Client_" + id + " Downloading: " + myURL.toString() );
+					logger.info( "Client_" + id + " Downloading: " + myURL.toString() );
 					myHttpResponse = httpClient.execute( myHttpGet );
-					Crawler.log( "Client_" + id + " Downloaded: " + myURL.toString() );
+					logger.info( "Client_" + id + " Downloaded: " + myURL.toString() );
 		            statusLine = myHttpResponse.getStatusLine();
 					entity = myHttpResponse.getEntity();
 					
 					//---HTML内容过大，不是网页---
 					if( entity.getContentLength() > 1000000 ){
-						Crawler.log( "Client_" + id + " 下载失败：Content too large. Discarded." );
+						logger.warning( "Discard content from " + myURL.toString() );
+						logQueue.add( myURL.toString() );
 						continue;
 					}
 
 					//---返回状态码提示异常---
 					if( statusLine.getStatusCode() >= 300 ){
-						Crawler.log( "Client_" + id + " Download failed." );
+						logger.warning( "Cannot download from " + myURL.toString() );
+						logQueue.add( myURL.toString() );
 						continue;
 					}
 
@@ -291,10 +308,16 @@ public class HttpClient {
 				} catch( ClientProtocolException e ){
 					//---错误协议，URI问题---
 					e.printStackTrace();
+					//---CODE3004---
+					logger.warning( "CODE3004" );
 					continue;
 				} catch( IOException e ){
 					//---连接网站失败---
 					e.printStackTrace();
+					//---CODE3005---
+//					logger.warning( "CODE3005" );
+					logger.warning( "Cannot download from " + myURL.toString() );
+					logQueue.add( myURL.toString() );
 					continue;
 				} finally {
 					if( myHttpResponse != null ){
@@ -302,6 +325,8 @@ public class HttpClient {
 							myHttpResponse.close();
 						} catch (IOException e) {
 							e.printStackTrace();
+							//---CODE3006---
+							logger.warning( "CODE3006" );
 						}
 					}
 				}
@@ -315,10 +340,14 @@ public class HttpClient {
 					InputSource source = new HTMLDocument( html ).toInputSource();
 					doc = new BoilerpipeSAXInput( source ).getTextDocument();
 				} catch (BoilerpipeProcessingException e) {
-					Crawler.log( e.toString() );
+					e.printStackTrace();
+					//---CODE3007---
+					logger.warning( "CODE3007" );
 					continue;
 				} catch (SAXException e) {
-					Crawler.log( e.toString() );
+					e.printStackTrace();
+					//---CODE3008---
+					logger.warning( "CODE3008" );
 					continue;
 				}
 				String body = "";
@@ -328,7 +357,9 @@ public class HttpClient {
 					if( body == null || body.length() < 1 ) body = "";
 					if( title == null || title.length() < 1 ) title = "";
 				} catch (BoilerpipeProcessingException e) {
-					Crawler.log( e.toString() );
+					//---CODE3009---
+					logger.warning( "CODE3009" );
+					e.printStackTrace();
 					continue;
 				}
 
@@ -343,6 +374,8 @@ public class HttpClient {
 					} catch (IOException e) {
 						//---failed to create file---
 						e.printStackTrace();
+						//---CODE3010---
+						logger.warning( "CODE3010" );
 						continue;
 					}
 				}
@@ -354,6 +387,8 @@ public class HttpClient {
 				} catch (FileNotFoundException e2) {
 					//---failed to write file---
 					e2.printStackTrace();
+					//---CODE3011---
+					logger.warning( "CODE3011" );
 					continue;
 				} finally {
 					if( pw != null ){
@@ -367,11 +402,14 @@ public class HttpClient {
 					htmlQueue.put( file.getName() );
 				} catch (InterruptedException e) {
 					//---failed to enqueue html---
-					Crawler.log( e.toString() );
+					e.printStackTrace();
+					//---CODE3012---
+					logger.warning( "CODE3012" );
 				}
 
 				//---加入待推送资源队列---
-				try {
+				if( noise > 0 ) try {
+					--noise;
 					resQueue.put( 
 							new Resource()
 							.setUrl( myURL.toString() )
@@ -381,6 +419,8 @@ public class HttpClient {
 				} catch (InterruptedException e1) {
 					//---failed to enqueue resource---
 					e1.printStackTrace();
+					//---CODE3013---
+					logger.warning( "CODE3013" );
 				}
 					
 				//---达到推送数量推送资源至solr服务器，由线程0执行---
@@ -396,6 +436,8 @@ public class HttpClient {
 							list.add( tmpJson );
 						} catch (InterruptedException e) {
 							e.printStackTrace();
+							//---CODE3014---
+							logger.warning( "CODE3014" );
 						}
 					}
 					JSONObject json = new JSONObject();
@@ -404,7 +446,7 @@ public class HttpClient {
 					
 					CloseableHttpClient httpClient = HttpClients.createDefault();
 //					HttpPost httpPost = new HttpPost( "http://localhost:8080/crawler/GetResource" );
-					HttpPost httpPost = new HttpPost( "http://222.201.145.116:8080/scut/SolrAdd" );
+					HttpPost httpPost = new HttpPost( "http://localhost:8080/scut/SolrAdd" );
 					List< NameValuePair > form = new ArrayList< NameValuePair >();
 					form.add( new BasicNameValuePair( "data", json.toString() ) );
 					UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity( form, Consts.UTF_8 );
@@ -412,22 +454,26 @@ public class HttpClient {
 					CloseableHttpResponse response = null;
 					try {
 						response = httpClient.execute( httpPost );
-						HttpEntity respEntity = response.getEntity();
-						Crawler.log( EntityUtils.toString( respEntity ) );
+//						HttpEntity respEntity = response.getEntity();
 //						System.out.println( EntityUtils.toString( respEntity ) );
 					} catch (ClientProtocolException e) {
 						//---URI问题---
 						e.printStackTrace();
+						//---CODE3015---
+						logger.warning( "CODE3015" );
 					} catch (IOException e) {
 						//---连接到solr服务器失败---
 						e.printStackTrace();
-						Crawler.log( "Failed to add resource..." );
+						//---CODE3016---
+						logger.warning( "CODE3016" );
 					} finally{
 						if( response != null ){
 							try {
 								response.close();
 							} catch (IOException e) {
 								e.printStackTrace();
+								//---CODE3017---
+								logger.warning( "CODE3017" );
 							}
 							response = null;
 						}
@@ -436,18 +482,21 @@ public class HttpClient {
 				
 				//---达到抓取数量重新抓取，由线程0执行---
 				if( id == 0 && filename.get() > MAX_HTML ){
-					Crawler.log( "Crawler is being reset..." );
+					logger.info( "Crawler is being reset..." );
 					crawler.pause();
 					crawler.flag = Crawler.REWINGING;
 					try {
 						Thread.sleep( 5000 );
 					} catch (InterruptedException e) {
-						Crawler.log( e.toString() );
+						e.printStackTrace();
+						//---CODE3018---
+						logger.warning( "CODE3018" );
 					}
+					logQueue.clear();
 					crawler.rewind();
 					filename.set( 0 );
 					if( crawler.flag == Crawler.REWINGING ) crawler.start();
-					Crawler.log( "Crawler reset finished." );
+					logger.info( "Crawler reset finished." );
 				}
 			}
 		}
