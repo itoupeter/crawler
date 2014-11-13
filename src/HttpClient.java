@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -76,10 +77,10 @@ public class HttpClient {
 	private PoolingHttpClientConnectionManager connMgr;
 	
 	//---待分析的HTML文件名队列---
-	private LinkedBlockingQueue< String > htmlQueue;
+	private LinkedBlockingQueue< AbstractMap.SimpleEntry< String, Integer > > htmlQueue;
 	
 	//---待抓取URL队列---
-	private LinkedBlockingQueue< String > urlQueue;
+	private LinkedBlockingQueue< AbstractMap.SimpleEntry< String, Integer > > urlQueue;
 	
 	//---生成本地HTML文件名---
 	private AtomicInteger filename = new AtomicInteger( 0 );
@@ -92,6 +93,9 @@ public class HttpClient {
 	
 	//---每次推送至solr服务器条目数---
 	private int RESOURCE_BUFFER_SIZE;
+	
+	//---最大爬取深度---
+	private int MAX_DEPTH;
 	
 	//---待推送资源队列---
 	private LinkedBlockingQueue< Resource > resQueue;
@@ -147,14 +151,15 @@ public class HttpClient {
 	
 	//---constructor---
 	public HttpClient( Crawler crawler, int nClients, 
-			LinkedBlockingQueue< String > urlQueue, LinkedBlockingQueue< String > htmlQueue, 
-			int MAX_HTML, int RESOURCE_BUFFER_SIZE, Logger logger ){
+			LinkedBlockingQueue< AbstractMap.SimpleEntry< String, Integer > > urlQueue, LinkedBlockingQueue< AbstractMap.SimpleEntry< String, Integer > > htmlQueue, 
+			int MAX_HTML, int RESOURCE_BUFFER_SIZE, int MAX_DEPTH, Logger logger ){
 		this.crawler = crawler;
 		this.nClients = nClients;
 		this.htmlQueue = htmlQueue;
 		this.urlQueue = urlQueue;
 		this.MAX_HTML = MAX_HTML;
 		this.RESOURCE_BUFFER_SIZE = RESOURCE_BUFFER_SIZE;
+		this.MAX_DEPTH = MAX_DEPTH;
 		this.logger = logger;
 		resQueue = new LinkedBlockingQueue<>();
 		logQueue = new LinkedBlockingQueue<>();
@@ -246,9 +251,11 @@ public class HttpClient {
 				}
 
 				//---从urlQueue获取URL---
+				AbstractMap.SimpleEntry< String, Integer > entry = null;
 				String url = "";
+				int depth = 0;
 				try {
-					url = urlQueue.poll( 1, TimeUnit.SECONDS );
+					entry = urlQueue.poll( 1, TimeUnit.SECONDS );
 				} catch ( InterruptedException e ) {
 					e.printStackTrace();
 					//---CODE3002---
@@ -256,7 +263,9 @@ public class HttpClient {
 				}
 				
 				//---若url为null，则队列为空，跳到下一周期---
-				if( url == null ) continue;
+				if( entry == null ) continue;
+				url = entry.getKey();
+				depth = entry.getValue().intValue();
 				
 				//---处理为合法URI---
 				URL myURL;
@@ -398,23 +407,26 @@ public class HttpClient {
 				}
 				
 				//---将HTML文件加入待分析队列---
-				try {
-					htmlQueue.put( file.getName() );
-				} catch (InterruptedException e) {
-					//---failed to enqueue html---
-					e.printStackTrace();
-					//---CODE3012---
-					logger.warning( "CODE3012" );
+				if( depth < MAX_DEPTH ){
+					try {
+						htmlQueue.put( new AbstractMap.SimpleEntry< String, Integer >( file.getName(), depth ) );
+					} catch (InterruptedException e) {
+						//---failed to enqueue html---
+						e.printStackTrace();
+						//---CODE3012---
+						logger.warning( "CODE3012" );
+					}
 				}
 
 				//---加入待推送资源队列---
-				if( noise > 0 ) try {
+				if( noise > 0 ) {
 					--noise;
+				} else try{
 					resQueue.put( 
 							new Resource()
 							.setUrl( myURL.toString() )
 							.setTitle( title )
-							.setBody( body.substring( 0, 128 < body.length() ? 128 : body.length() ) )
+							.setBody( body )
 							);
 				} catch (InterruptedException e1) {
 					//---failed to enqueue resource---

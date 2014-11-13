@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -29,10 +30,10 @@ public class HtmlParser {
 	private Parser parsers[];
 	
 	//---待分析的HTML文件名队列---
-	private LinkedBlockingQueue< String > htmlQueue;
+	private LinkedBlockingQueue< AbstractMap.SimpleEntry< String, Integer > > htmlQueue;
 	
 	//---待抓取URL队列---
-	private LinkedBlockingQueue< String > urlQueue;
+	private LinkedBlockingQueue< AbstractMap.SimpleEntry< String, Integer > > urlQueue;
 	
 	//---运行状态标记---
 	private static final int RUNNING = 0;
@@ -49,7 +50,7 @@ public class HtmlParser {
 	//---htmlQueue: 储存待分析的HTML文件的文件名的队列---
 	//---urlQueue: 储存待爬取的URL的队列---
 	//---logger: 日志工具---
-	public HtmlParser( Crawler crawler, int nParsers, LinkedBlockingQueue< String > urlQueue, LinkedBlockingQueue< String > htmlQueue, Logger logger ){
+	public HtmlParser( Crawler crawler, int nParsers, LinkedBlockingQueue< AbstractMap.SimpleEntry< String, Integer > > urlQueue, LinkedBlockingQueue< AbstractMap.SimpleEntry< String, Integer > > htmlQueue, Logger logger ){
 		this.crawler = crawler;
 		this.nParsers = nParsers;
 		this.htmlQueue = htmlQueue;
@@ -95,6 +96,7 @@ public class HtmlParser {
 		private File file;
 		private BufferedReader br;
 		private ArrayList< String > urlList;
+		private int depth;
 		private int nUrls;
 		private int id;
 		
@@ -140,8 +142,9 @@ public class HtmlParser {
 				}
 				
 				//---获取HTML文件名---
+				AbstractMap.SimpleEntry< String, Integer > entry = null;
 				try {
-					filename = htmlQueue.poll( 1, TimeUnit.SECONDS );
+					entry = htmlQueue.poll( 1, TimeUnit.SECONDS );
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 					//---CODE2003---
@@ -149,7 +152,9 @@ public class HtmlParser {
 				}
 				
 				//---若filename为null，则队列为空，跳到下一周期。---
-				if( filename == null ) continue;
+				if( entry == null ) continue;
+				filename = entry.getKey();
+				depth = entry.getValue();
 				
 				//---从HTML文件读取内容到html字符串---
 				file = new File( MyAPI.getRootDir() + "/html/" + filename );
@@ -212,7 +217,7 @@ public class HtmlParser {
 					
 					//---将分析所得URL加入urlQueue---
 					try {
-						urlQueue.put( url );
+						urlQueue.put( new AbstractMap.SimpleEntry<String, Integer>( url, depth + 1 ) );
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 						//---CODE2007---
