@@ -25,7 +25,7 @@ public class GetCrawlLog extends HttpServlet {
 		for( Iterator< String > ite = logQueue.iterator(); ite.hasNext(); ){
 			JSONObject json = new JSONObject();
 			json.put( "url", ite.next() );
-			json.put( "passed", true );
+			json.put( "passed", false );
 			json.put( "message", "Can not download." );
 			list.add( json );
 		}
