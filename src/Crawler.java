@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.AbstractMap;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -30,6 +31,9 @@ public class Crawler {
 	//---下载网页数量---
 	private int MAX_HTML;
 	
+	//---最大爬取深度---
+	private int MAX_DEPTH;
+	
 	//---推送队列大小---
 	private int RESOURCE_BUFFER_SIZE;
 	
@@ -40,10 +44,10 @@ public class Crawler {
 	public HtmlParser myHtmlParser; 
 	
 	//---待抓取URL队列---
-	private LinkedBlockingQueue< String > urlQueue = new LinkedBlockingQueue< String >();
+	private LinkedBlockingQueue< AbstractMap.SimpleEntry< String, Integer > > urlQueue = new LinkedBlockingQueue< AbstractMap.SimpleEntry< String, Integer > >();
 	
 	//---待分析HTML文件名队列---
-	private LinkedBlockingQueue< String > htmlQueue = new LinkedBlockingQueue< String >();
+	private LinkedBlockingQueue< AbstractMap.SimpleEntry< String, Integer > > htmlQueue = new LinkedBlockingQueue< AbstractMap.SimpleEntry< String, Integer > >();
 	
 	//---日志---
 	public Logger logger;
@@ -93,6 +97,9 @@ public class Crawler {
 				} else if( tmp.indexOf( "RESOURCE_BUFFER_SIZE" ) != -1 ){
 					tmp = br.readLine();
 					RESOURCE_BUFFER_SIZE = Integer.parseInt( tmp );
+				} else if( tmp.indexOf( "MAX_DEPTH" ) != -1 ){
+					tmp = br.readLine();
+					MAX_DEPTH = Integer.parseInt( tmp );
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -110,7 +117,7 @@ public class Crawler {
 		}
 		
 		//---创建HttpClinet模块---
-		myHttpClient = new HttpClient( this, MAX_HTTPCLIENT, urlQueue, htmlQueue, MAX_HTML, RESOURCE_BUFFER_SIZE, logger );
+		myHttpClient = new HttpClient( this, MAX_HTTPCLIENT, urlQueue, htmlQueue, MAX_HTML, RESOURCE_BUFFER_SIZE, MAX_DEPTH, logger );
 
 		//---创建HtmlParser模块---
 		myHtmlParser = new HtmlParser( this, MAX_HTMLPARSER, urlQueue, htmlQueue, logger );
@@ -167,7 +174,7 @@ public class Crawler {
 		try {
 			br = new BufferedReader( new FileReader( file ) );
 			while( ( str = br.readLine() ) != null ){
-				urlQueue.put( str );
+				urlQueue.put( new AbstractMap.SimpleEntry< String, Integer >( str, 1 ) );
 				logger.info( "Add to seed URLs: " + str );
 			}
 		} catch (FileNotFoundException e) {
