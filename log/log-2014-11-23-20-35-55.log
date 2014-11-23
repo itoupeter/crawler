@@ -1,0 +1,34 @@
+[Sun Nov 23 20:35:55 CST 2014][INFO]Add to seed URLs: http://www.birminghammail.co.uk
+[Sun Nov 23 20:35:55 CST 2014][INFO]Add to seed URLs: http://www.thelancet.com
+[Sun Nov 23 20:35:56 CST 2014][INFO]Client_9 Downloading: http://www.birminghammail.co.uk
+[Sun Nov 23 20:35:57 CST 2014][INFO]Client_3 Downloading: http://www.thelancet.com
+[Sun Nov 23 20:35:57 CST 2014][INFO]Client_9 Downloaded: http://www.birminghammail.co.uk
+[Sun Nov 23 20:35:58 CST 2014][INFO]Client_3 Downloaded: http://www.thelancet.com
+[Sun Nov 23 20:35:58 CST 2014][INFO]Parser_0 Parsing: http://www.birminghammail.co.uk
+[Sun Nov 23 20:36:00 CST 2014][INFO]Client_9 Downloading: http://www.birminghammail.co.uk/buy-sell-tell/business-directory/
+[Sun Nov 23 20:36:00 CST 2014][INFO]Client_7 Downloading: http://www.birminghammail.co.uk/buy-sell-tell/family-notices/
+[Sun Nov 23 20:36:00 CST 2014][INFO]Client_5 Downloading: http://www.birminghammail.co.uk/cookie-policy/
+[Sun Nov 23 20:36:00 CST 2014][INFO]Client_6 Downloading: http://www.birminghammail.co.uk/newsletters/
+[Sun Nov 23 20:36:00 CST 2014][INFO]Client_1 Downloading: http://www.birminghammail.co.uk/
+[Sun Nov 23 20:36:00 CST 2014][INFO]Client_2 Downloading: http://www.birminghammail.co.uk/all-about/birmingham-pub-bombings
+[Sun Nov 23 20:36:00 CST 2014][INFO]Client_8 Downloading: http://www.birminghammail.co.uk/whats-on/
+[Sun Nov 23 20:36:00 CST 2014][INFO]Client_0 Downloading: http://www.birminghammail.co.uk/whats-on/arts-culture/
+[Sun Nov 23 20:36:00 CST 2014][INFO]Client_4 Downloading: http://www.birminghammail.co.uk/whats-on/comedy/
+[Sun Nov 23 20:36:00 CST 2014][INFO]Client_3 Downloading: http://www.birminghammail.co.uk/whats-on/family-kids/
+[Sun Nov 23 20:36:00 CST 2014][INFO]Client_9 Downloaded: http://www.birminghammail.co.uk/buy-sell-tell/business-directory/
+[Sun Nov 23 20:36:01 CST 2014][INFO]Client_7 Downloaded: http://www.birminghammail.co.uk/buy-sell-tell/family-notices/
+[Sun Nov 23 20:36:01 CST 2014][INFO]Client_9 Downloading: http://www.birminghammail.co.uk/whats-on/film/
+[Sun Nov 23 20:36:01 CST 2014][INFO]Client_1 Downloaded: http://www.birminghammail.co.uk/
+[Sun Nov 23 20:36:02 CST 2014][INFO]Client_7 Downloading: http://www.birminghammail.co.uk/whats-on/food-drink/
+[Sun Nov 23 20:36:02 CST 2014][INFO]Client_5 Downloaded: http://www.birminghammail.co.uk/cookie-policy/
+[Sun Nov 23 20:36:03 CST 2014][INFO]Client_1 Downloading: http://www.birminghammail.co.uk/whats-on/music-nightlife/
+[Sun Nov 23 20:36:03 CST 2014][INFO]Client_8 Downloaded: http://www.birminghammail.co.uk/whats-on/
+[Sun Nov 23 20:36:04 CST 2014][INFO]Client_5 Downloading: http://www.birminghammail.co.uk/whats-on/competitions/
+[Sun Nov 23 20:36:04 CST 2014][INFO]Client_4 Downloaded: http://www.birminghammail.co.uk/whats-on/comedy/
+[Sun Nov 23 20:36:04 CST 2014][INFO]Client_8 Downloading: http://www.birminghammail.co.uk/whats-on/music-nightlife-news/review-kasabian-lg-arena-birmingham-8158982
+[Sun Nov 23 20:36:05 CST 2014][WARNING]Cannot download from http://www.birminghammail.co.uk/whats-on/arts-culture/
+[Sun Nov 23 20:36:05 CST 2014][INFO]Client_2 Downloaded: http://www.birminghammail.co.uk/all-about/birmingham-pub-bombings
+[Sun Nov 23 20:36:05 CST 2014][INFO]Client_4 Downloading: http://www.birminghammail.co.uk/whats-on/family-kids-news/magical-journey-laurence-llewelyn-bowen-festive-8146753
+[Sun Nov 23 20:36:06 CST 2014][INFO]Client_0 Downloading: http://www.birminghammail.co.uk/whats-on/family-kids-news/birmingham-german-market-days-out-8147031
+[Sun Nov 23 20:36:06 CST 2014][INFO]Client_6 Downloaded: http://www.birminghammail.co.uk/newsletters/
+[Sun Nov 23 20:36:06 CST 2014][INFO]Client_2 Downloading: http://www.birminghammail.co.uk/whats-on/arts-culture-news/truth-behind-peaky-blinders-no-7938754
