@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.Date;
@@ -160,14 +159,22 @@ public class Crawler {
 				logger.warning( "CODE1004" );
 			}
 		}
-		LinkedList< String > domainList = new LinkedList< String >();
+		File file2 = new File( MyAPI.getRootDir() + "/Domains.txt" );
+		if( !file2.exists() ){
+			try{
+				file.createNewFile();
+			} catch ( IOException e ){
+				e.printStackTrace();
+				//---CODE1005---
+				logger.warning( "CODE1005" );
+			}
+		}
 		BufferedReader br = null;
+		String str;
 		try {
 			br = new BufferedReader( new FileReader( file ) );
-			String str;
 			while( ( str = br.readLine() ) != null ){
 				urlQueue.put( new AbstractMap.SimpleEntry< String, Integer >( str, 1 ) );
-				domainList.add( new URL( str ).getHost() );
 				logger.info( "Add to seed URLs: " + str );
 			}
 		} catch (FileNotFoundException e) {
@@ -194,10 +201,36 @@ public class Crawler {
 				br = null;
 			}
 		}
-		specifiedDomain = new String[ domainList.size() ];
-		for( int i = 0; i < specifiedDomain.length; ++i ){
-			specifiedDomain[ i ] = domainList.getFirst();
-			domainList.removeFirst();
+		LinkedList< String > domainList = new LinkedList< String >();
+		try{
+			br = new BufferedReader( new FileReader( file2 ) );
+			while( ( str = br.readLine() ) != null ){
+				domainList.add( str );
+			}
+			specifiedDomain = new String[ domainList.size() ];
+			for( int i = 0; i < specifiedDomain.length; ++i ){
+				specifiedDomain[ i ] = domainList.getFirst();
+				domainList.removeFirst();
+			}
+		} catch ( FileNotFoundException e ){
+			e.printStackTrace();
+			//---CODE1010---
+			logger.warning( "CODE1010" );
+		} catch ( IOException e ){
+			e.printStackTrace();
+			//---CODE1011---
+			logger.warning( "CODE1011" );
+		} finally {
+			if( br != null ){
+				try{
+					br.close();
+				} catch ( IOException e ){
+					e.printStackTrace();
+					//---CODE1012---
+					logger.warning( "CODE1012" );
+				}
+				br = null;
+			}
 		}
 	}
 	
@@ -238,7 +271,7 @@ public class Crawler {
 	public void rewind(){
 		try{
 			logger.removeHandler( fileHandler );
-			SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM" );
+			SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd-HH-mm-ss" );
 			String logFileName = MyAPI.getRootDir() + "/log/log-" + sdf.format( new Date() ) + ".log";
 			fileHandler = new FileHandler( logFileName );
 			fileHandler.setFormatter( new Formatter(){
