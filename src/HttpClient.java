@@ -11,8 +11,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -109,9 +111,6 @@ public class HttpClient {
 	private static final int STOPPED = 2;
 	private static final int REWINDING = 3;
 	private int flag = PAUSING;
-	
-	//---preceding noise amount---
-	private int noise = 50;
 	
 	//---初始化httpClient和connMgr---
 	{
@@ -419,14 +418,16 @@ public class HttpClient {
 				}
 
 				//---加入待推送资源队列---
-				if( noise > 0 ) {
-					--noise;
-				} else try{
+				try{
+					SimpleDateFormat sdf = new SimpleDateFormat( "yyyy_MM" );
+					String date = sdf.format( new Date() );
 					resQueue.put( 
 							new Resource()
 							.setUrl( myURL.toString() )
 							.setTitle( title )
 							.setBody( body )
+							.setDate( date )
+							.setWebsite( myURL.getHost() )
 							);
 				} catch (InterruptedException e1) {
 					//---failed to enqueue resource---
@@ -445,6 +446,8 @@ public class HttpClient {
 							tmpJson.put( "url", tmpRes.url );
 							tmpJson.put( "title", tmpRes.title );
 							tmpJson.put( "abstract", tmpRes.body );
+							tmpJson.put( "website", tmpRes.website );
+							tmpJson.put( "date", tmpRes.date );
 							list.add( tmpJson );
 						} catch (InterruptedException e) {
 							e.printStackTrace();
@@ -518,6 +521,8 @@ public class HttpClient {
 		public String url;
 		public String title;
 		public String body;
+		public String website;
+		public String date;
 		
 		public Resource setUrl( String url ){
 			this.url = url;
@@ -531,6 +536,16 @@ public class HttpClient {
 		
 		public Resource setBody( String body ){
 			this.body = body;
+			return this;
+		}
+		
+		public Resource setWebsite( String website ){
+			this.website = website;
+			return this;
+		}
+		
+		public Resource setDate( String date ){
+			this.date = date;
 			return this;
 		}
 	}
