@@ -18,18 +18,27 @@ public class GetCrawlLog extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		if( CrawlerServlet.crawler == null ) return;
+		
+		int page = Integer.parseInt( req.getParameter( "page" ) ) - 1;
+		
+		PrintWriter pw = resp.getWriter();
+		if( CrawlerServlet.crawler == null ){
+			pw.print( "[]" );
+			return;
+		}
 		
 		JSONArray list = new JSONArray();
 		LinkedBlockingQueue< String > logQueue = CrawlerServlet.crawler.myHttpClient.logQueue;
-		for( Iterator< String > ite = logQueue.iterator(); ite.hasNext(); ){
+		int count = 0;
+		for( Iterator< String > ite = logQueue.iterator(); ite.hasNext(); ++count ){
+			if( count / 20 < page ) continue;
+			if( count / 20 > page ) break;
 			JSONObject json = new JSONObject();
 			json.put( "url", ite.next() );
 			json.put( "passed", false );
-			json.put( "message", "Can not download." );
+			json.put( "message", "Can not download" );
 			list.add( json );
 		}
-		PrintWriter pw = resp.getWriter();
 		pw.print( list.toString() );
 	}
 	
