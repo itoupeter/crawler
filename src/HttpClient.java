@@ -297,8 +297,8 @@ public class HttpClient {
 		            statusLine = myHttpResponse.getStatusLine();
 					entity = myHttpResponse.getEntity();
 					
-					//---HTML没有内容或内容过大，不是网页---
-					if( entity == null || entity.getContentLength() > 1000000 ){
+					//---HTML内容过大，不是网页---
+					if( entity.getContentLength() > 1000000 ){
 						logger.warning( "Discard content from " + myURL.toString() );
 						logQueue.add( myURL.toString() );
 						continue;
