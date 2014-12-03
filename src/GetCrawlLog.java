@@ -19,7 +19,7 @@ public class GetCrawlLog extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
-		int page = Integer.parseInt( req.getParameter( "page" ) ) - 1;
+		int page = Integer.parseInt( req.getParameter( "page" ) );
 		
 		PrintWriter pw = resp.getWriter();
 		if( CrawlerServlet.crawler == null ){
