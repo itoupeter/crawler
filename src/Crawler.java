@@ -82,8 +82,9 @@ public class Crawler {
 				logger.warning( "CODE1000" );
 			}
 		}
+		BufferedReader br = null;
 		try {
-			BufferedReader br = new BufferedReader( new FileReader( file ) );
+			br = new BufferedReader( new FileReader( file ) );
 			String tmp = "";
 			while( ( tmp = br.readLine() ) != null ){
 				if( tmp.indexOf( "PARSER_THREAD" ) != -1 ){
@@ -115,6 +116,15 @@ public class Crawler {
 			e.printStackTrace();
 			//---CODE1003---
 			logger.warning( "CODE1003" );
+		} finally{
+			if( br != null ){
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				br = null;
+			}
 		}
 		
 		//---´´½¨HttpClinetÄ£¿é---
