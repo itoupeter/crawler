@@ -1,7 +1,7 @@
 # crawler
 Developed for School of International Education, South China University of Technology
 
-This is a module of a news colletor system project. The other modules are GUI and a Apache Solr based indexing module. Modules work on different server machine and transfer data using HTTP request containing json string content.
+This is a module of a news collector system project. The other modules are GUI and a Apache Solr based indexing module. Modules work on different server machine and transfer data using HTTP request containing json string content.
 
 A simple crawler used to collect pages from user specified news websites.<br>
 -Used Apache's HttpClient to download and parse html files<br>
